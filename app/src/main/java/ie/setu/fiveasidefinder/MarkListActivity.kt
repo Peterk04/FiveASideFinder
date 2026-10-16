@@ -1,5 +1,7 @@
 package ie.setu.fiveasidefinder
 
+// Use the search control added to the XML.
+import androidx.appcompat.widget.SearchView
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -15,6 +17,8 @@ class MarkListActivity : AppCompatActivity() {
     // Keep the list and its adapter available to the other functions.
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PitchAdapter
+    // Keep the search box available when refreshing the list.
+    private lateinit var searchInput: SearchView
 
     // Show the list layout and connect it to the shared pitch store.
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +59,24 @@ class MarkListActivity : AppCompatActivity() {
         // Connect the adapter to the RecyclerView.
         recyclerView.adapter = adapter
 
+        // Connect to the search box in the layout.
+        searchInput = findViewById(R.id.pitchSearch)
+
+// Update the list when the user changes the search.
+        searchInput.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            // Results already update while typing, so handle Search without extra work.
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            // Show the matching pitches whenever the text changes.
+            override fun onQueryTextChange(newText: String?): Boolean {
+                refreshPitches()
+                return true
+            }
+        })
+
         // Find the button below the list.
         val returnButton = findViewById<Button>(R.id.returnButton)
 
@@ -64,6 +86,21 @@ class MarkListActivity : AppCompatActivity() {
         }
     }
 
+    // Show pitches matching the search text.
+    private fun refreshPitches() {
+        // Read the search text and remove spaces around it.
+        val query = searchInput.query.toString().trim()
+
+        // Keep pitches whose name or description contains the text.
+        val matches = AppData.pitches.findAll().filter { pitch ->
+            pitch.name.contains(query, ignoreCase = true) ||
+                    pitch.description.contains(query, ignoreCase = true)
+        }
+
+        // Display the matches using the adapter from Lab 5.
+        adapter.updatePitches(matches)
+    }
+
     // Refresh the rows after returning from the edit screen.
     override fun onResume() {
         // Let Android resume the Activity first.
@@ -71,7 +108,8 @@ class MarkListActivity : AppCompatActivity() {
 
         // Only refresh after onCreate has made the adapter.
         if (::adapter.isInitialized) {
-            adapter.updatePitches(AppData.pitches.findAll())
+            // Refresh the list while keeping the current search applied.
+            refreshPitches()
         }
     }
 
@@ -93,6 +131,7 @@ class MarkListActivity : AppCompatActivity() {
         AppData.pitches.delete(pitch.id)
 
         // Ask the adapter to show the store's latest contents.
-        adapter.updatePitches(AppData.pitches.findAll())
+        // Refresh the list while keeping the current search applied.
+        refreshPitches()
     }
 }
