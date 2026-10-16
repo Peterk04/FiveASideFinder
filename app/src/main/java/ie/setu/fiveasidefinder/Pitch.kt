@@ -1,4 +1,4 @@
-package ie.setu.fiveasidefinder.models
+package ie.setu.fiveasidefinder
 
 // a data class to represent one pitch and give functions such as toString and copy
 data class Pitch(
