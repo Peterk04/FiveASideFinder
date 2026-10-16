@@ -1,7 +1,7 @@
 package ie.setu.fiveasidefinder.main
 
-import ie.setu.fiveasidefinder.models.Pitch
-import ie.setu.fiveasidefinder.models.PitchMemStore
+import ie.setu.fiveasidefinder.Pitch
+import ie.setu.fiveasidefinder.PitchMemStore
 
 // declared store outside every function so all funcs can access it
 //val doesnt make the pitches immutable, pitches can still be added, edited and deleted

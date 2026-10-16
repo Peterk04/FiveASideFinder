@@ -1,4 +1,4 @@
-package ie.setu.fiveasidefinder.models
+package ie.setu.fiveasidefinder
 
 import java.util.concurrent.atomic.AtomicLong
 
