@@ -25,6 +25,8 @@ class PitchMemStore {
             foundPitch.description = pitch.description
             foundPitch.latitude = pitch.latitude
             foundPitch.longitude = pitch.longitude
+            // Save surface changes when an existing pitch is edited.
+            foundPitch.surface = pitch.surface
             true
         } else {
             false
