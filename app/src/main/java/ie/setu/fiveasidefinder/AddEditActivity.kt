@@ -1,5 +1,7 @@
 package ie.setu.fiveasidefinder
 
+// Use Android's dropdown control.
+import android.widget.Spinner
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -9,7 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 
 class AddEditActivity : AppCompatActivity() {
 
-    // Hold the input fields so loading and saving can both use them.
+    // Keep the dropdown available when loading and saving pitches.
+    private lateinit var surfaceInput: Spinner
     private lateinit var nameInput: EditText
     private lateinit var descriptionInput: EditText
     private lateinit var latitudeInput: EditText
@@ -31,6 +34,8 @@ class AddEditActivity : AppCompatActivity() {
         descriptionInput = findViewById(R.id.descriptionInput)
         latitudeInput = findViewById(R.id.latitudeInput)
         longitudeInput = findViewById(R.id.longitudeInput)
+        // Connect to the dropdown in the form layout.
+        surfaceInput = findViewById(R.id.surfaceInput)
 
         // Find the form's Save and Cancel buttons.
         val saveButton = findViewById<Button>(R.id.saveButton)
@@ -73,6 +78,11 @@ class AddEditActivity : AppCompatActivity() {
         descriptionInput.setText(pitch.description)
         latitudeInput.setText(pitch.latitude.toString())
         longitudeInput.setText(pitch.longitude.toString())
+        // Read the choices in the same order as the dropdown.
+        val surfaces = resources.getStringArray(R.array.pitch_surfaces)
+        // Select the surface already stored for this pitch.
+        surfaceInput.setSelection(surfaces.indexOf(pitch.surface))
+
     }
 
     // Validate the fields, create or update a pitch, and close the form.
@@ -80,6 +90,8 @@ class AddEditActivity : AppCompatActivity() {
         // Read the text fields and remove extra spaces around the text.
         val name = nameInput.text.toString().trim()
         val description = descriptionInput.text.toString().trim()
+        // Read the option currently selected in the dropdown.
+        val surface = surfaceInput.selectedItem.toString()
 
         // Stop and show an error if the pitch has no name.
         if (name.isEmpty()) {
@@ -112,7 +124,9 @@ class AddEditActivity : AppCompatActivity() {
                 name = name,
                 description = description,
                 latitude = latitude,
-                longitude = longitude
+                // Include the coordinates and chosen surface in the pitch being saved.
+                longitude = longitude,
+                surface = surface
             )
 
             // Give the new pitch to the shared store.
@@ -127,7 +141,9 @@ class AddEditActivity : AppCompatActivity() {
                 name = name,
                 description = description,
                 latitude = latitude,
-                longitude = longitude
+                // Include the coordinates and chosen surface in the pitch being saved.
+                longitude = longitude,
+                surface = surface
             )
 
             // Update the matching pitch in the shared store.

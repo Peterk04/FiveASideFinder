@@ -50,8 +50,8 @@ class PitchAdapter(
         // Show the pitch's ID and name.
         holder.titleText.text = "${pitch.id}: ${pitch.name}"
 
-        // Show the pitch's description.
-        holder.descriptionText.text = pitch.description
+        // Show the surface below the description using the existing TextView.
+        holder.descriptionText.text = "${pitch.description}\nSurface: ${pitch.surface}"
 
         // Show the pitch's latitude and longitude.
         holder.coordinatesText.text =

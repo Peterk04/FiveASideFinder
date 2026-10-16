@@ -33,6 +33,19 @@
             android:hint="Description"
             android:inputType="text" />
 
+        <!-- Explain what the dropdown selects. -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Surface" />
+
+        <!-- Let the user choose one of the surfaces from strings.xml. -->
+        <Spinner
+            android:id="@+id/surfaceInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/pitch_surfaces" />
+
         <EditText
             android:id="@+id/latitudeInput"
             android:layout_width="match_parent"
