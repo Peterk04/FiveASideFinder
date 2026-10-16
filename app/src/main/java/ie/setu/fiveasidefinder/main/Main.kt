@@ -5,11 +5,9 @@ import ie.setu.fiveasidefinder.models.PitchMemStore
 
 // declared store outside every function so all funcs can access it
 //val doesnt make the pitches immutable, pitches can still be added, edited and deleted
-// Keep showing the menu and run the chosen action until the user exits.
 val store = PitchMemStore()
 
-// main() starts the console program
-// when () runs the function matching the user's input.
+// Keep showing the menu and run the chosen action until the user exits.
 fun main() {
     println("=== Pitch Console App (Lab 1) ===")
     var input: Int
