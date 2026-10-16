@@ -22,6 +22,13 @@
             android:textSize="28sp"
             android:textStyle="bold" />
 
+        <!-- Add a search box for finding pitches. -->
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/pitchSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:queryHint="Search pitches" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/pitchesRecyclerView"
             android:layout_width="match_parent"
