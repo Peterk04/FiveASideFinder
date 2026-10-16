@@ -9,5 +9,7 @@ data class Pitch(
     // Keep the longitude, with a comma because another field follows.
     var longitude: Double = 0.0,
     // Store the selected surface; existing pitches use this default.
-    var surface: String = "Astro turf"
+    var surface: String = "Astro turf",
+    //add option for floodlights
+    var floodlights: Boolean = false
 )

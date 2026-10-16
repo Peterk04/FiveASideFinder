@@ -1,5 +1,7 @@
 package ie.setu.fiveasidefinder
 
+// Use Android's checkbox control.
+import android.widget.CheckBox
 // Use Android's dropdown control.
 import android.widget.Spinner
 import android.os.Bundle
@@ -17,6 +19,8 @@ class AddEditActivity : AppCompatActivity() {
     private lateinit var descriptionInput: EditText
     private lateinit var latitudeInput: EditText
     private lateinit var longitudeInput: EditText
+    // Keep the checkbox available for loading and saving.
+    private lateinit var floodlightsInput: CheckBox
 
     // Hold the selected pitch ID, or null when adding a new pitch.
     private var editingId: Long? = null
@@ -36,6 +40,8 @@ class AddEditActivity : AppCompatActivity() {
         longitudeInput = findViewById(R.id.longitudeInput)
         // Connect to the dropdown in the form layout.
         surfaceInput = findViewById(R.id.surfaceInput)
+        // Connect to the checkbox in the form layout.
+        floodlightsInput = findViewById(R.id.floodlightsInput)
 
         // Find the form's Save and Cancel buttons.
         val saveButton = findViewById<Button>(R.id.saveButton)
@@ -82,6 +88,8 @@ class AddEditActivity : AppCompatActivity() {
         val surfaces = resources.getStringArray(R.array.pitch_surfaces)
         // Select the surface already stored for this pitch.
         surfaceInput.setSelection(surfaces.indexOf(pitch.surface))
+        // Restore the saved checked or unchecked state when editing.
+        floodlightsInput.isChecked = pitch.floodlights
 
     }
 
@@ -92,6 +100,8 @@ class AddEditActivity : AppCompatActivity() {
         val description = descriptionInput.text.toString().trim()
         // Read the option currently selected in the dropdown.
         val surface = surfaceInput.selectedItem.toString()
+        // Read true when the checkbox is checked and false when unchecked.
+        val floodlights = floodlightsInput.isChecked
 
         // Stop and show an error if the pitch has no name.
         if (name.isEmpty()) {
@@ -126,7 +136,10 @@ class AddEditActivity : AppCompatActivity() {
                 latitude = latitude,
                 // Include the coordinates and chosen surface in the pitch being saved.
                 longitude = longitude,
-                surface = surface
+                // Include the surface and checkbox value when creating or updating.
+                surface = surface,
+                floodlights = floodlights
+
             )
 
             // Give the new pitch to the shared store.
@@ -143,7 +156,9 @@ class AddEditActivity : AppCompatActivity() {
                 latitude = latitude,
                 // Include the coordinates and chosen surface in the pitch being saved.
                 longitude = longitude,
-                surface = surface
+                // Include the surface and checkbox value when creating or updating.
+                surface = surface,
+                floodlights = floodlights
             )
 
             // Update the matching pitch in the shared store.

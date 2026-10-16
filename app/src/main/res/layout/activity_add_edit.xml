@@ -46,6 +46,13 @@
             android:layout_height="wrap_content"
             android:entries="@array/pitch_surfaces" />
 
+        <!-- Let the user select floodlights without typing yes or no. -->
+        <CheckBox
+            android:id="@+id/floodlightsInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Floodlights available" />
+
         <EditText
             android:id="@+id/latitudeInput"
             android:layout_width="match_parent"
