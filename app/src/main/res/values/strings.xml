@@ -3,7 +3,7 @@
 
     <!-- Keep the dropdown choices together in one list. -->
     <string-array name="pitch_surfaces">
-        <item>Artificial turf</item>
+        <item>Astro turf</item>
         <item>Grass</item>
         <item>Hard court</item>
         <item>Futsal court</item>

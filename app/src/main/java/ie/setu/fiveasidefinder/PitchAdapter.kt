@@ -50,8 +50,12 @@ class PitchAdapter(
         // Show the pitch's ID and name.
         holder.titleText.text = "${pitch.id}: ${pitch.name}"
 
-        // Show the surface below the description using the existing TextView.
-        holder.descriptionText.text = "${pitch.description}\nSurface: ${pitch.surface}"
+        // Turn the Boolean into a readable answer.
+        val lights = if (pitch.floodlights) "Yes" else "No"
+
+        // Show the details using the existing TextView.
+        holder.descriptionText.text =
+            "${pitch.description}\nSurface: ${pitch.surface}\nFloodlights: $lights"
 
         // Show the pitch's latitude and longitude.
         holder.coordinatesText.text =

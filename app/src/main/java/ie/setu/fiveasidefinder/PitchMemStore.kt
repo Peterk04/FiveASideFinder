@@ -27,6 +27,8 @@ class PitchMemStore {
             foundPitch.longitude = pitch.longitude
             // Save surface changes when an existing pitch is edited.
             foundPitch.surface = pitch.surface
+            // Save changes made to the floodlights checkbox.
+            foundPitch.floodlights = pitch.floodlights
             true
         } else {
             false
