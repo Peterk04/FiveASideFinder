@@ -3,133 +3,111 @@ package ie.setu.fiveasidefinder
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class AddEditActivity : AppCompatActivity() {
 
+    // Hold the input fields so loading and saving can both use them.
     private lateinit var nameInput: EditText
     private lateinit var descriptionInput: EditText
     private lateinit var latitudeInput: EditText
     private lateinit var longitudeInput: EditText
 
+    // Hold the selected pitch ID, or null when adding a new pitch.
     private var editingId: Long? = null
 
-    // Build the form and load a pitch when an ID was passed from the list screen.
+    // Show the XML form and load an existing pitch when an ID was passed in.
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Run the normal Activity setup.
         super.onCreate(savedInstanceState)
 
-        createUserInterface()
+        // Show the form made in the visual Layout Editor.
+        setContentView(R.layout.activity_add_edit)
 
-        editingId = intent.getLongExtra("id", -1L)
+        // Connect each Kotlin property to its EditText in the XML.
+        nameInput = findViewById(R.id.nameInput)
+        descriptionInput = findViewById(R.id.descriptionInput)
+        latitudeInput = findViewById(R.id.latitudeInput)
+        longitudeInput = findViewById(R.id.longitudeInput)
 
-        if (editingId != -1L) {
+        // Find the form's Save and Cancel buttons.
+        val saveButton = findViewById<Button>(R.id.saveButton)
+        val cancelButton = findViewById<Button>(R.id.cancelButton)
+
+        // Read the ID sent by the list; treat -1 as "adding a new pitch".
+        editingId = intent.getLongExtra("id", -1L).takeIf { it != -1L }
+
+        // When editing, change the heading and fill the fields.
+        if (editingId != null) {
+            findViewById<TextView>(R.id.formTitle).text = "Edit Pitch"
             loadExistingPitch(editingId!!)
         }
+
+        // Save the entered details when Save is tapped.
+        saveButton.setOnClickListener {
+            savePitch()
+        }
+
+        // Close the form without changing a pitch when Cancel is tapped.
+        cancelButton.setOnClickListener {
+            finish()
+        }
     }
 
-    // Build the four input fields and Save and Cancel buttons in Kotlin.
-    private fun createUserInterface() {
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(32, 320, 32, 32)
-        }
-
-        nameInput = EditText(this).apply {
-            hint = "Pitch name"
-        }
-
-        descriptionInput = EditText(this).apply {
-            hint = "Description"
-        }
-
-        latitudeInput = EditText(this).apply {
-            hint = "Latitude"
-            inputType =
-                android.text.InputType.TYPE_CLASS_NUMBER or
-                        android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-        }
-
-        longitudeInput = EditText(this).apply {
-            hint = "Longitude"
-            inputType =
-                android.text.InputType.TYPE_CLASS_NUMBER or
-                        android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-        }
-
-        val saveButton = Button(this).apply {
-            text = "Save"
-
-            setOnClickListener {
-                savePitch()
-            }
-        }
-
-        val cancelButton = Button(this).apply {
-            text = "Cancel"
-
-            setOnClickListener {
-                finish()
-            }
-        }
-
-        root.addView(nameInput)
-        root.addView(descriptionInput)
-        root.addView(latitudeInput)
-        root.addView(longitudeInput)
-        root.addView(saveButton)
-        root.addView(cancelButton)
-
-        setContentView(root)
-    }
-
-    // Find the selected pitch and fill the form with its current details.
+    // Find the selected pitch and copy its details into the form.
     private fun loadExistingPitch(id: Long) {
+        // Look up the pitch that the list screen selected.
         val pitch = AppData.pitches.findOne(id)
 
+        // Close the form if that pitch no longer exists.
         if (pitch == null) {
-            Toast.makeText(
-                this,
-                "Pitch not found",
-                Toast.LENGTH_SHORT
-            ).show()
-
+            Toast.makeText(this, "Pitch not found", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
+        // Display the saved values so they can be edited.
         nameInput.setText(pitch.name)
         descriptionInput.setText(pitch.description)
         latitudeInput.setText(pitch.latitude.toString())
         longitudeInput.setText(pitch.longitude.toString())
     }
 
-    // Validate the form, create or update the pitch, then return to the list.
+    // Validate the fields, create or update a pitch, and close the form.
     private fun savePitch() {
+        // Read the text fields and remove extra spaces around the text.
         val name = nameInput.text.toString().trim()
         val description = descriptionInput.text.toString().trim()
 
+        // Stop and show an error if the pitch has no name.
         if (name.isEmpty()) {
             nameInput.error = "Pitch name is required"
             return
         }
 
+        // Convert the latitude to a number without crashing on bad input.
         val latitude = latitudeInput.text.toString().toDoubleOrNull()
 
+        // Stop and show an error if the latitude is not a number.
         if (latitude == null) {
             latitudeInput.error = "Enter a valid number"
             return
         }
 
+        // Convert the longitude to a number without crashing on bad input.
         val longitude = longitudeInput.text.toString().toDoubleOrNull()
 
+        // Stop and show an error if the longitude is not a number.
         if (longitude == null) {
             longitudeInput.error = "Enter a valid number"
             return
         }
 
-        if (editingId == null || editingId == -1L) {
+        // An absent ID means this is a new pitch.
+        if (editingId == null) {
+            // Make a Pitch from the form values.
             val pitch = Pitch(
                 name = name,
                 description = description,
@@ -137,14 +115,13 @@ class AddEditActivity : AppCompatActivity() {
                 longitude = longitude
             )
 
+            // Give the new pitch to the shared store.
             AppData.pitches.create(pitch)
 
-            Toast.makeText(
-                this,
-                "Pitch created",
-                Toast.LENGTH_SHORT
-            ).show()
+            // Tell the user that the pitch was added.
+            Toast.makeText(this, "Pitch created", Toast.LENGTH_SHORT).show()
         } else {
+            // Keep the selected ID while replacing that pitch's details.
             val pitch = Pitch(
                 id = editingId!!,
                 name = name,
@@ -153,15 +130,14 @@ class AddEditActivity : AppCompatActivity() {
                 longitude = longitude
             )
 
+            // Update the matching pitch in the shared store.
             AppData.pitches.update(pitch)
 
-            Toast.makeText(
-                this,
-                "Pitch updated",
-                Toast.LENGTH_SHORT
-            ).show()
+            // Tell the user that the edit was saved.
+            Toast.makeText(this, "Pitch updated", Toast.LENGTH_SHORT).show()
         }
 
+        // Return to the menu or list that opened this form.
         finish()
     }
 }
